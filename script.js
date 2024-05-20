@@ -1,10 +1,6 @@
 'use strict';
 
 /////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// BANKIST APP
-
-/////////////////////////////////////////////////
 // Data
 
 // DIFFERENT DATA! Contains movement dates, currency and locale
@@ -177,14 +173,33 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+
+    // Decrease 1s
+    time--;
+  };
+
+  let time = 120;
+
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+};
+
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
-
-// FAKE ALWAYS LOGGED IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+let currentAccount, timer;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -193,7 +208,6 @@ btnLogin.addEventListener('click', function (e) {
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
-  console.log(currentAccount);
 
   if (currentAccount?.pin === +inputLoginPin.value) {
     // Display UI and message
@@ -220,6 +234,9 @@ btnLogin.addEventListener('click', function (e) {
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
+
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
 
     // Update UI
     updateUI(currentAccount);
@@ -252,6 +269,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Update UI
     updateUI(currentAccount);
+
+    // Reset timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -261,14 +282,20 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    setTimeout(function () {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    // Add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
+      // Add loan date
+      currentAccount.movementsDates.push(new Date().toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+
+      // Reset timer
+      clearInterval(timer);
+      timer = startLogOutTimer();
+    }, 2500);
   }
   inputLoanAmount.value = '';
 });
@@ -300,143 +327,3 @@ btnSort.addEventListener('click', function (e) {
   displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
-/*
-console.log(23 === 23.0);
-
-console.log(Number('23'));
-console.log(+'23');
-
-// Parsing
-console.log(Number.parseInt('30px', 10));
-console.log(Number.parseFloat('2.5rem'));
-console.log(Number.parseInt('2.5rem'));
-
-// console.log(parseInt('2.5rem'));
-
-console.log(Number.isNaN(20));
-console.log(Number.isNaN('20'));
-console.log(Number.isNaN(+'20x'));
-console.log(Number.isNaN(23 / 0));
-
-console.log(Number.isFinite(20));
-console.log(Number.isFinite('20'));
-
-console.log(Number.isInteger(23));
-console.log(Number.isInteger(23.0));
-console.log(Number.isInteger(23 / 0));
-
-
-console.log(Math.sqrt(25));
-console.log(25 ** (1 / 2));
-console.log(8 ** (1 / 3));
-
-console.log(Math.max(5, 18, 23, 2));
-console.log(Math.max(5, 18, '23', 2));
-console.log(Math.max(5, 18, '23px', 2));
-
-console.log(Math.min(5, 18, 23, 2));
-
-console.log(Math.PI * Number.parseFloat('10px') ** 2);
-
-console.log(Math.trunc(Math.random() * 6) + 1);
-
-const randomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min) + 1) + min;
-// console.log(randomInt(10, 20));
-
-console.log(Math.trunc(23.3));
-console.log('-------------------');
-console.log(Math.round(23.3));
-console.log(Math.round(23.9));
-console.log('-------------------');
-console.log(Math.ceil(23.3));
-console.log('-------------------');
-console.log(Math.floor(23.3));
-console.log(Math.floor('23.9'));
-console.log('-------------------');
-console.log(Math.trunc(-23.3));
-console.log(Math.floor(-23.3));
-
-console.log((2.7).toFixed(0));
-console.log((2.7).toFixed(3));
-*/
-
-/*
-// Remainder
-console.log(5 % 2);
-console.log(8 % 3);
-console.log(8 / 3); //8 = 2 * 3 + 2
-
-const isEven = n => n % 2 === 0;
-console.log(isEven(8));
-console.log(isEven(23));
-console.log(isEven(514));
-
-labelBalance.addEventListener('click', function () {
-  [...document.querySelectorAll('.movements__row')].forEach(function (row, i) {
-    if (i % 2 === 0) row.style.backgroundColor = 'orangered';
-    if (i % 3 === 0) row.style.backgroundColor = 'blue';
-  });
-});
-
-// 287,460,000,000
-const diameter = 287_460_000_000;
-console.log(diameter);
-
-const price = 345_99;
-console.log(price);
-
-const transferFee = 15_00;
-
-const PI = 3.14_15;
-console.log(PI);
-
-console.log(Number('230_000'));
-console.log(parseInt('230_000'));
-
-
-console.log(2 ** 53 - 1);
-console.log(Number.MAX_SAFE_INTEGER);
-
-console.log(4838430248342043823408394839483204n);
-console.log(BigInt(465448));
-
-console.log(10000n + 10000n);
-
-console.log(20n > 15);
-console.log(20n === 20);
-console.log(20n == '20');
-
-
-const future = new Date(2037, 10, 19, 15, 23);
-console.log(Number(future));
-
-const calcDays = (date1, date2) =>
-  Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
-const days1 = calcDays(new Date(2037, 3, 14), new Date(2037, 3, 4));
-console.log(days1);
-
-
-const num = 23235562.23;
-
-const options = {
-  style: 'currency',
-  unit: 'mile-per-hour',
-  currency: 'EUR',
-};
-
-console.log('US:      ', new Intl.NumberFormat('en-US', options).format(num));
-
-console.log('Germany: ', new Intl.NumberFormat('de-DE', options).format(num));
-
-console.log('UA:      ', new Intl.NumberFormat('uk-UA', options).format(num));
-
-console.log(
-  navigator.language,
-  new Intl.NumberFormat(navigator.language, options).format(num)
-);
-*/
