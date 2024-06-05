@@ -1,6 +1,6 @@
 # Bankist
 
-Bankist is a project developed during a course that simulates a banking website. Users can perform transfers, take loans, close accounts, and more.
+Bankist is a project developed during a course that simulates a banking website. Users can perform transfers, take loans, close accounts and more.
 
 ## Features
 
