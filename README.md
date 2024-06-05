@@ -16,3 +16,5 @@ To explore the website's functionality, use the following credentials:
 
 - **Login**:       *js*
 - **Password**:  *1111*
+
+https://bankist-course-arr.netlify.app/
